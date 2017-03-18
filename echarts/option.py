@@ -179,3 +179,23 @@ class VisualMap(Base):
         if self._kwargs:
             json.update(self._kwargs)
         return json
+
+    
+class DataZoom(Base):
+    """dataZoom 组件 用于区域缩放，从而能自由关注细节的数据信息，或者概览数据整体，或者去除离群点的影响。"""
+
+    def __init__(self, type,show=True,  **kwargs):
+        assert type in ("slider", "inside")
+        self.type = type
+        self.show = show
+        self._kwargs = kwargs
+
+    @property
+    def json(self):
+        """JSON format data"""
+        json = {
+            "type": self.type,
+        }
+        if self._kwargs:
+            json.update(self._kwargs)
+        return json
