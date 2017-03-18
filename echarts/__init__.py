@@ -16,16 +16,17 @@ import logging
 import tempfile
 import webbrowser
 from .option import Base
-from .option import Axis, Legend, Series, Tooltip, Toolbox, VisualMap
+from .option import Axis, Legend, Series, Tooltip, Toolbox, VisualMap,DataZoom
 from .datastructure import *
 
 __version__ = '0.1'
-__release__ = '0.1.3'
+__release__ = '0.1.4'
 __author__ = 'Hsiaoming Yang <me@lepture.com>'
 
 
 class Echart(Base):
-    def __init__(self, title, description=None, axis=True, **kwargs):
+    def __init__(self, title, description=None, axis=True,titlekw=False, **kwargs):
+
         self.title = {
             'text': title,
             'subtext': description,
@@ -37,7 +38,11 @@ class Echart(Base):
             self.y_axis = []
 
         self.series = []
+        self.dataZoom = []
+
         self.kwargs = kwargs
+        if titlekw:
+            self.title.update(self.kwargs)
 
         self.logger = logging.getLogger(__name__)
 
@@ -59,6 +64,8 @@ class Echart(Base):
             self.toolbox = obj
         elif isinstance(obj, VisualMap):
             self.visualMap = obj
+        elif isinstance(obj, DataZoom):
+            self.dataZoom.append(obj)
 
         return self
 
@@ -86,6 +93,8 @@ class Echart(Base):
             json['toolbox'] = self.toolbox.json
         if hasattr(self, 'visualMap'):
             json['visualMap'] = self.visualMap.json
+        if hasattr(self, 'dataZoom'):
+             json['dataZoom'] = list(map(dict, self.dataZoom)) or [{}]
 
         json.update(self.kwargs)
         return json
